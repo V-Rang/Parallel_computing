@@ -11,6 +11,8 @@ Master thread uses original variable, all other threads make a private copy of t
 #include<iostream>
 #include<omp.h>
 
+using namespace std;
+
 int a,b,tid;
 float x;
 
@@ -39,4 +41,3 @@ int main()
         printf("Thread %d: a,b,x = %d %d %f\n",tid,a,b,x);
     }
 }
-using namespace std;
