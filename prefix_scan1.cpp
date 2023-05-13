@@ -38,7 +38,7 @@ int main()
     double a[n],a_ser_incl[n],a2[n],a_ser_excl[n],a3[n];
     int i,j;
     //creating an array a: 1 2 3 4 5 6 7 8
-    //a_ser_inc is used to calculate the inclusive scan output array seraially.
+    //a_ser_inc is used to calculate the inclusive scan output array serially.
     //a3 is same as a and is used for the exclusive scan case.
     for(i=0;i<n;i++)
     {
@@ -79,14 +79,14 @@ int main()
     printf("Inclsive scan performed serially: ");
     for(i = 0;i<n;i++)
     {
-        cout << a[i] << " ";
+        cout << a_ser_incl[i] << " ";
     }
     cout << endl;
 
     printf("Inclsive scan performed parallely using Hillis-Steele Algorithm: ");
     for(i = 0;i<n;i++)
     {
-        cout << a_ser_incl[i] << " ";
+        cout << a[i] << " ";
     }
     cout << endl;
 
