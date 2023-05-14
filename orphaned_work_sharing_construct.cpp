@@ -13,6 +13,17 @@ using namespace std;
 
 void hello(int id)
 {
+    /*
+    if use #pramga omp parallel for: parallel from main invokes team of threads -> for each of the threads -> a team
+    is spawned again and the iterations of i are shared. This is done for each thread created from the parallel call
+    from main. Therefore total outputs = number of threads (from main) X number of iterations of i
+
+
+    if use #pragma omp for: parallel from main invokes team of threads -> each of threads take a portion of the 
+    iterations of i-> i.e. total number of outputs = number of iterations of i.
+    
+    */
+    // #pragma omp parallel for
     #pragma omp for 
     for(int i=0;i<4;i++)
     {
