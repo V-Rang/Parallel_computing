@@ -17,6 +17,8 @@ void hello(int id)
     if use #pramga omp parallel for: parallel from main invokes team of threads -> for each of the threads -> a team
     is spawned again and the iterations of i are shared. This is done for each thread created from the parallel call
     from main. Therefore total outputs = number of threads (from main) X number of iterations of i
+    When each thread encounters the #pragma omp parallel for construct, it creates a brand-new team of threads, of
+    which it will be the master, to execute the team of threads.
 
 
     if use #pragma omp for: parallel from main invokes team of threads -> each of threads take a portion of the 
