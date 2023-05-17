@@ -73,30 +73,62 @@ int main()
 
     cout << "Maximum using critical sections: " << cur_max << endl;
 
-    //using atomic directive - not working
+    // //using atomic directive - not working
+    // cur_max = -std::numeric_limits<float>::max(); //reinitializing
+    // // float cur_max2;
+    // #pragma omp parallel for 
+    // for(i=0;i<n;i++)
+    // {
+
+    //     if(a[i] > cur_max)
+    //     {
+    //         // #pragma omp single //need to figure out how to get exclusive access here so cur_max doesn't change from line above
+    //         // cur_max2 = cur_max;
+    //         if(a[i] > cur_max)
+    //         {
+    //             #pragma omp atomic
+    //             cur_max -= cur_max;
+
+    //             #pragma omp atomic
+    //             cur_max += a[i];
+    //         }
+    //         // cur_max = cur_max2;
+    //     }
+
+    // }
+    // cout << "Maximum using atomic directive: " << cur_max << endl;
+
+    // Maximum using atomic directive - works
     cur_max = -std::numeric_limits<float>::max(); //reinitializing
-    // float cur_max2;
-    #pragma omp parallel for 
+    // float cur_max2 = 0.0;
+    #pragma omp parallel for
     for(i=0;i<n;i++)
     {
-
         if(a[i] > cur_max)
         {
-            // #pragma omp single //need to figure out how to get exclusive access here so cur_max doesn't change from line above
-            // cur_max2 = cur_max;
+            #pragma omp acquire flush cur_max // code works even without three flush statements
+
             if(a[i] > cur_max)
             {
-                #pragma omp atomic
-                cur_max -= cur_max;
+                #pragma omp acquire flush cur_max
 
-                #pragma omp atomic
-                cur_max += a[i];
+                #pragma omp atomic write
+                cur_max = a[i];
+
+                // #pragma omp atomic
+                // cur_max -= cur_max;
+
+                // #pragma omp atomic
+                // cur_max += a[i];
+                
+                #pragma omp release flush cur_max
             }
-            // cur_max = cur_max2;
         }
 
     }
-    cout << "Maximum using atomic directive: " << cur_max << endl;
+    cout << "Maximum using atomic directive: "<<cur_max << endl;
+
+
 
     //using runtime library lock routines
     cur_max = -std::numeric_limits<float>::max(); //reinitializing
