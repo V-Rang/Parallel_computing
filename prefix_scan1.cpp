@@ -69,7 +69,7 @@ int main()
     }    
 
     //inclusive scan using Hillis-Steele algorithm - D=O(logn) W=O(nlogn)
-    for(i=0;i<floor(log2(n));i++)
+    for(i=0;i<=floor(log2(n));i++)
     {
         double a2[n] = {0};
         for(j=0;j<n;j++) a2[j] = a[j];
