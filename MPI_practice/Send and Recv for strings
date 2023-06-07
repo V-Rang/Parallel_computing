@@ -1,0 +1,38 @@
+/*
+MPI - Send and Recv for string i.e. character array. 
+*/
+
+#include<iostream>
+#include<mpi.h>
+#include<string.h>
+#include<stdio.h>
+
+using namespace std;
+
+int main(int argc, char **argv)
+{
+    int my_node,total_nodes;
+    char message[100];
+    MPI_Status status;
+    MPI_Init(&argc,&argv);
+    MPI_Comm_rank(MPI_COMM_WORLD,&my_node);
+    MPI_Comm_size(MPI_COMM_WORLD,&total_nodes);
+
+    if(my_node != 0)
+    {
+        sprintf(message,"Message by process %d",my_node);
+        MPI_Send(message,100,MPI_CHAR,0,1,MPI_COMM_WORLD);
+    
+    }
+    else
+    {
+        for(int j = 1;j<total_nodes;j++)
+        {
+            MPI_Recv(message,100,MPI_CHAR,j,1,MPI_COMM_WORLD,&status);
+            cout << message << endl;
+        }
+    }
+
+    MPI_Finalize();
+
+}
