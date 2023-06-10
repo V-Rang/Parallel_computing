@@ -47,7 +47,12 @@ int main(int argc, char **argv)
         loc_sum += a[i]*b[i];
     }
 
+    //To have only process 0 have the end result while other procs have result = 0.
     MPI_Reduce(&loc_sum,&glob_sum,1,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+
+    //If want all procs to have end result which can then be used for future calculations:
+    // MPI_Allreduce(&loc_sum,&glob_sum,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+
 
     if(my_node == 0)
     {
