@@ -8,14 +8,15 @@ modified by proc0 which then Bcasts it to the other processes.
 
 using namespace std;
 
-
-void build_custom_matrixentry(int *rows, int *cols, float *values, MPI_Datatype *mpi_new_t)
+void build_cust_d(int *row_index, int *col_index, float *vals, MPI_Datatype* mpi_mesg)
 {
-    int block_lengths[3];
+    int blocklengths[3];
     MPI_Aint displacements[3];
     MPI_Datatype typelists[3];
 
-    block_lengths[0] = block_lengths[1] = block_lengths[2] = 1;
+    blocklengths[0] = 3;
+    blocklengths[1] = 3;
+    blocklengths[2] = 3;
 
     typelists[0] = MPI_INT;
     typelists[1] = MPI_INT;
@@ -26,73 +27,62 @@ void build_custom_matrixentry(int *rows, int *cols, float *values, MPI_Datatype 
 
     displacements[0] = 0;
 
-    MPI_Get_address(rows,&start_address);
-    MPI_Get_address(cols,&address);
-    
+    MPI_Get_address(row_index,&start_address);
+    MPI_Get_address(col_index,&address);
+
     displacements[1] = address - start_address;
 
-    MPI_Get_address(values,&address);
-    
+    MPI_Get_address(vals,&address);
+
     displacements[2] = address - start_address;
 
-    MPI_Type_create_struct(3,block_lengths,displacements,typelists,mpi_new_t);
+    MPI_Type_create_struct(3,blocklengths,displacements,typelists,mpi_mesg);
 
+    MPI_Type_commit(mpi_mesg);
+    
 }
-
-//following two structs not needed for MPI code
-struct matrix_entry
-{
-    int row;
-    int col;
-    float value;
-
-    matrix_entry() {}
-    matrix_entry(int row_ind, int col_ind ,float val): row(row_ind),col(col_ind),value(val) {}
-};
-
-struct matrix
-{
-    matrix_entry* mat;
-
-    matrix(): mat(NULL) {}
-
-};
-
-
 
 int main(int argc, char **argv)
 {
-    int my_node,total_nodes;
-   
-    MPI_Status status;
-    MPI_Init(&argc,&argv);
-    MPI_Comm_rank(MPI_COMM_WORLD,&my_node);
-    MPI_Comm_size(MPI_COMM_WORLD,&total_nodes);
-
-    int *row_index, *col_index;
+    int *row;
+    int *col;
     float *entry_vals;
 
-    row_index = new int[3]{0,1,2};
-    col_index = new int[3]{3,4,5};
-    entry_vals = new float[3]{6.7,7.8,8.9};
+    row = new int[3]{10,20,30};
+    col = new int[3]{40,50,60};
+    entry_vals = new float[3]{12,23,34};
 
-    MPI_Datatype new_mpi_struct;
+    int my_node,total_nodes;
+    MPI_Init(&argc,&argv);
+    MPI_Comm_rank(MPI_COMM_WORLD,&my_node);
+    MPI_Comm_size(MPI_COMM_WORLD,&total_nodes);    
+
+    MPI_Datatype new_mpi_t;
 
     if(my_node == 0)
     {
-        entry_vals[1] = 13.56;
+        *row = 1;
+        *(row+1) = 2;
+        *(row+2) = 3;
+
+        *col = 4;
+        *(col+1) = 5;
+        *(col+2) = 6;
+
+        *entry_vals = 1.2;
+        *(entry_vals+1) = 2.3;
+        *(entry_vals+2) = 3.4;
     }
     
-    build_custom_matrixentry(row_index,col_index,entry_vals,&new_mpi_struct);
-    MPI_Type_commit(&new_mpi_struct);
+    build_cust_d(row,col,entry_vals,&new_mpi_t);
 
-    MPI_Bcast(row_index,1,new_mpi_struct,0,MPI_COMM_WORLD);
-    
+    MPI_Bcast(row,1,new_mpi_t,0,MPI_COMM_WORLD);
+
     if(my_node == 1)
     {
         for(int i=0;i<3;i++)
         {
-            cout << row_index[i] << " " << col_index[i] << " " << entry_vals[i] << endl;
+            cout << row[i] << " " << col[i] << " " << entry_vals[i] << endl;
         }
     }
 
