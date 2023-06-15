@@ -60,10 +60,15 @@ int main(int argc, char **argv)
                 fflush(stdout);
                 for(int k=0;k<n;k++)
                 {
+                    // scanf("%d",a_loc_glob[j][k]); //directly doing just this gives error
+                    
+                    scanf("%d",&a_loc_glob[j][k]); //ths works
+                    /*
+                    instead of above line, following section also works
                     int temp;
-                    // scanf("%d",a_loc_glob[j][k]);
                     scanf("%d",&temp);
                     a_loc_glob[j][k] = temp;
+                    */
                 }
             }// finished making n/p X n. Now communicate this as n/p X n/p blocks to all the other processes
             
@@ -94,7 +99,7 @@ int main(int argc, char **argv)
 
         }
     }
-    if(my_node == 4) //can change to see the block of n X n/p recieved by every proc from proc 0.
+    if(my_node == 1) //can change to see the block of n X n/p recieved by every proc from proc 0.
     {
         printf("For process %d\n",my_node);
         for(int i=0;i<n;i++)
