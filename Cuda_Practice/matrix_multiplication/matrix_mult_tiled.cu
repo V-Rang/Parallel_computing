@@ -32,14 +32,17 @@ __global__ void matrixmult(int *a, int *b, int *c)
     {
         shared_a[ty][tx] = a[row*n + i + tx];
         shared_b[ty][tx] = b[(i + ty)*n + col];
-        __syncthreads(); //s_a and s_b must be finished creating before moving to next step
+        __syncthreads(); //s_a and s_b must be finished creating before moving to next step 
+        // i.e sync threads to make sure all the needed data for the block is loaded.
  
         for(int j=0;j<num_threads;j++)
         {
             temp += shared_a[ty][j]*shared_b[j][tx];        
         }
         __syncthreads(); //temp of current s_a and s_b block must be finished before moving to creating that of next step, i.e. s_a and s_b must not be polluted by values of the next iteration before this temp is finsihed creating.
+        //i.e. sync threads to make sure all the needed data for the block has been accessed.
     }
+
     c[row*n + col] = temp;
 }
 
