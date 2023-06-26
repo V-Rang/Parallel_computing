@@ -3,6 +3,7 @@ good aliasing:
 Good: At X B (transposing A and then traversing the elements of its columns, i.e. each thread accesses a unique column of At, each of which 
 are next to each other in memory. This results in good memory usage as data for threads can be found with single call to DRAM that will load the 
 values needed by the threads in the cache.)
+Time: using NsightCompute: 87.56 ms
 */
 
 #include<iostream>
