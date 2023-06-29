@@ -16,6 +16,7 @@ int main()
 	int num_blocks = 2;
 	int num_threads = 8;
 	check<<<num_blocks,num_threads>>>();	
+	cudaDeviceSynchronize(); //have to add this to ensure all threads are done executing the kernel before control returned to host
 
 	return 0;
 }
